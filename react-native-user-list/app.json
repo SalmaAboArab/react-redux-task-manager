@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "expo-user-list",
+    "slug": "expo-user-list",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "ios": { "supportsTablet": true },
+    "android": {},
+    "web": { "bundler": "metro" }
+  }
+}
