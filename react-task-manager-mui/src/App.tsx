@@ -1,6 +1,7 @@
-import { Box, Container, Divider, useTheme } from "@mui/material";
+import { Box, Container, Divider, Stack, useTheme } from "@mui/material";
 import "./App.css";
 import TaskManagerHeader from "./components/header";
+import TaskCreator from "./components/task-creator";
 
 function App() {
   const theme = useTheme();
@@ -15,10 +16,13 @@ function App() {
         alignItems: 'center',
       }}
     >
-      <Container maxWidth="sm" sx={{ margin: "20px" }}>
+      <Box sx={{ m: 2.5, p: 3, maxWidth: '750px', width: '100%'}}>
         <TaskManagerHeader />
         <Divider sx={{my: 3, bgcolor: "rgba(236, 228, 211, 0.25)", width: '100%'}}/>
-      </Container>
+        <Stack direction="column" spacing={2} sx={{ bgcolor: theme.palette.paperColor.paper, borderRadius: 0.5, p: 3, boxShadow: `0px 24px 60px rgba(0, 0, 0, 0.35), 0 1px 0 rgba(255, 255, 255, 0.4) inset`, position: "relative"}}>
+          <TaskCreator/>
+        </Stack>
+      </Box>
     </Box>
   );
 }
