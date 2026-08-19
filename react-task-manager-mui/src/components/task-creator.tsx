@@ -10,12 +10,10 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useForm } from "react-hook-form";
-
-type TaskData = {
-  taskName: string;
-  priority: "low" | "medium" | "high";
-};
+import { Controller, useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { create } from "../redux/tasks-slice";
+import type { TaskData } from "./types";
 
 export default function TaskCreator() {
   const theme = useTheme();
@@ -23,6 +21,8 @@ export default function TaskCreator() {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
+    control,
   } = useForm<TaskData>({
     defaultValues: {
       taskName: "",
@@ -30,8 +30,11 @@ export default function TaskCreator() {
     },
   });
 
+  const dispatch = useDispatch();
+
   const submitData = (data: TaskData) => {
-    console.log("data", data);
+    dispatch(create(data));
+    reset();
   };
 
   return (
@@ -68,16 +71,43 @@ export default function TaskCreator() {
         <Grid>
           <FormControl size="small">
             <InputLabel>Priority</InputLabel>
+            <Controller
+              name="priority"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  defaultValue="medium"
+                  label="Priority"
+                  MenuProps={{
+                    sx: {
+                      "& .MuiPaper-root": {
+                        bgcolor: theme.palette.paperColor.paper,
+                      },
 
-            <Select
-              {...register("priority")}
-              defaultValue="medium"
-              label="Priority"
-            >
-              <MenuItem value="low">Low</MenuItem>
-              <MenuItem value="medium">Medium</MenuItem>
-              <MenuItem value="high">High</MenuItem>
-            </Select>
+                      "& .MuiMenuItem-root": {
+                        fontSize: 13,
+                        fontFamily: "monospace",
+                        py: 0.3,
+
+                        "&.Mui-selected": {
+                          bgcolor: "grey.700",
+                          color: "white",
+                        },
+
+                        "&.Mui-selected:hover": {
+                          bgcolor: "grey.700",
+                        },
+                      },
+                    },
+                  }}
+                >
+                  <MenuItem value="low">Low</MenuItem>
+                  <MenuItem value="medium">Medium</MenuItem>
+                  <MenuItem value="high">High</MenuItem>
+                </Select>
+              )}
+            />
           </FormControl>
         </Grid>
 

@@ -1,7 +1,7 @@
 import {
   Box,
-  Chip,
   FormControl,
+  FormHelperText,
   Input,
   Link,
   MenuItem,
@@ -10,12 +10,44 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { useState } from "react";
+import type { TaskData, TaskType } from "./types";
+import { Controller, useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { edit, toggleComplete } from "../redux/tasks-slice";
 
-export default function TaskItem() {
+export default function TaskItem({ task }: { task: TaskType }) {
   const theme = useTheme();
 
   const [EditMode, setEditMode] = useState(false);
-  const [completed, setCompleted] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    control,
+  } = useForm<TaskData>({
+    defaultValues: {
+      taskName: task?.title,
+      priority: task?.priority,
+    },
+  });
+
+  const dispatch = useDispatch();
+
+  const handleEdit = () => {
+    reset({
+      taskName: task.title,
+      priority: task.priority.toLowerCase() as TaskData["priority"],
+    });
+
+    setEditMode(true);
+  };
+
+  const submitData = (data: TaskData) => {
+    dispatch(edit({ id: task?.id, ...data }));
+    setEditMode(false);
+  };
 
   return (
     <Box
@@ -40,104 +72,131 @@ export default function TaskItem() {
       }}
     >
       {EditMode ? (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 1,
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Input
-            size="small"
-            disableUnderline
+        <form onSubmit={handleSubmit(submitData)}>
+          <Box
             sx={{
-              width: "100%",
-              borderBottom: "1px solid black",
-              "&:focus-within": {
-                borderBottom: `1px solid ${theme.palette.status.medium}`,
-              },
-            }}
-          />
-
-          <FormControl
-            size="small"
-            sx={{
-              minWidth: 85,
-              "& .MuiSelect-select": {
-                fontSize: 13,
-                fontFamily: "monospace",
-                p: 0,
-                py: 0.3,
-                pl: 1,
-              },
+              display: "flex",
+              flexDirection: "row",
+              gap: 1,
+              alignItems: "center",
+              justifyContent: "space-between",
             }}
           >
-            <Select
-              defaultValue="medium"
+            <Input
               size="small"
-              MenuProps={{
-                sx: {
-                  "& .MuiPaper-root": {
-                    bgcolor: theme.palette.secondary.main,
-                  },
+              disableUnderline
+              {...register("taskName", {
+                required: "Task Name Can't Be Empty.",
+              })}
+              sx={{
+                width: "100%",
+                borderBottom: "1px solid black",
+                "&:focus-within": {
+                  borderBottom: `1px solid ${theme.palette.status.medium}`,
+                },
+              }}
+            />
 
-                  "& .MuiMenuItem-root": {
-                    fontSize: 13,
-                    fontFamily: "monospace",
-                    py: 0.3,
-
-                    "&.Mui-selected": {
-                      bgcolor: "grey.700",
-                      color: "white",
-                    },
-
-                    "&.Mui-selected:hover": {
-                      bgcolor: "grey.700",
-                    },
-                  },
+            <FormControl
+              size="small"
+              sx={{
+                minWidth: 85,
+                "& .MuiSelect-select": {
+                  fontSize: 13,
+                  fontFamily: "monospace",
+                  p: 0,
+                  py: 0.3,
+                  pl: 1,
                 },
               }}
             >
-              <MenuItem value="low">Low</MenuItem>
-              <MenuItem value="medium">Medium</MenuItem>
-              <MenuItem value="high">High</MenuItem>
-            </Select>
-          </FormControl>
+              <Controller
+                name="priority"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    size="small"
+                    MenuProps={{
+                      sx: {
+                        "& .MuiPaper-root": {
+                          bgcolor: theme.palette.secondary.main,
+                        },
 
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Link
-              sx={{
-                cursor: "pointer",
-                mr: 0.5,
-                color: theme.palette.text.primary,
-                fontSize: "0.8rem",
-                fontFamily: "monospace",
-                textDecorationColor: theme.palette.text.primary,
-                textUnderlineOffset: 2,
-              }}
-              onClick={() => setEditMode(false)}
-            >
-              SAVE
-            </Link>
+                        "& .MuiMenuItem-root": {
+                          fontSize: 13,
+                          fontFamily: "monospace",
+                          py: 0.3,
 
-            <Link
-              sx={{
-                cursor: "pointer",
-                mr: 0.5,
-                color: theme.palette.text.disabled,
-                fontSize: "0.8rem",
-                fontFamily: "monospace",
-                textDecorationColor: theme.palette.text.disabled,
-                textUnderlineOffset: 2,
-              }}
-              onClick={() => setEditMode(false)}
-            >
-              CANCEL
-            </Link>
+                          "&.Mui-selected": {
+                            bgcolor: "grey.700",
+                            color: "white",
+                          },
+
+                          "&.Mui-selected:hover": {
+                            bgcolor: "grey.700",
+                          },
+                        },
+                      },
+                    }}
+                  >
+                    <MenuItem value="low">Low</MenuItem>
+                    <MenuItem value="medium">Medium</MenuItem>
+                    <MenuItem value="high">High</MenuItem>
+                  </Select>
+                )}
+              />
+            </FormControl>
+
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Link
+                component="button"
+                type="submit"
+                sx={{
+                  cursor: "pointer",
+                  mr: 0.5,
+                  color: theme.palette.text.primary,
+                  fontSize: "0.8rem",
+                  fontFamily: "monospace",
+                  textDecorationColor: theme.palette.text.primary,
+                  textUnderlineOffset: 2,
+                }}
+              >
+                SAVE
+              </Link>
+
+              <Link
+                component="button"
+                sx={{
+                  cursor: "pointer",
+                  mr: 0.5,
+                  color: theme.palette.text.disabled,
+                  fontSize: "0.8rem",
+                  fontFamily: "monospace",
+                  textDecorationColor: theme.palette.text.disabled,
+                  textUnderlineOffset: 2,
+                }}
+                onClick={() => {
+                  reset();
+                  setEditMode(false);
+                }}
+              >
+                CANCEL
+              </Link>
+            </Box>
           </Box>
-        </Box>
+          <FormHelperText
+            error={!!errors.taskName}
+            sx={{
+              mb: 1,
+              fontSize: "0.9rem",
+              // fontStyle: "italic",
+              color: "rgba(255, 255, 255, 0.75)",
+            }}
+          >
+            {errors.taskName && errors.taskName.message}
+          </FormHelperText>
+        </form>
       ) : (
         <Box
           sx={{
@@ -150,15 +209,11 @@ export default function TaskItem() {
           <Box
             role="button"
             aria-label={
-              completed ? "Mark task as incomplete" : "Mark task as complete"
+              task?.completed ? "Mark task as incomplete" : "Mark task as complete"
             }
             tabIndex={0}
-            onClick={() => setCompleted((prev) => !prev)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                setCompleted((prev) => !prev);
-              }
+            onClick={() => {
+              dispatch(toggleComplete(task));
             }}
             sx={{
               flexShrink: 0,
@@ -167,7 +222,7 @@ export default function TaskItem() {
               mt: 0.35,
               borderRadius: "50%",
               border: `2px solid ${
-                completed
+                task?.completed
                   ? theme.palette.status.medium
                   : theme.palette.text.disabled
               }`,
@@ -177,9 +232,7 @@ export default function TaskItem() {
               cursor: "pointer",
               transition: "all 0.2s ease",
 
-              bgcolor: completed
-                ? theme.palette.status.medium
-                : "transparent",
+              bgcolor: task?.completed ? theme.palette.status.medium : "transparent",
 
               "&:hover": {
                 borderColor: theme.palette.status.medium,
@@ -191,7 +244,7 @@ export default function TaskItem() {
               },
             }}
           >
-            {completed && (
+            {task?.completed && (
               <Typography
                 component="span"
                 sx={{
@@ -219,14 +272,15 @@ export default function TaskItem() {
               variant="subtitle1"
               sx={{
                 fontSize: "1.1rem",
-                color: completed
+                color: task?.completed
                   ? theme.palette.text.disabled
                   : theme.palette.text.primary,
-                textDecoration: completed ? "line-through" : "none",
+                textDecoration: task?.completed ? "line-through" : "none",
                 transition: "color 0.2s ease",
               }}
             >
-              Sketch the ledger layout
+              {/* Sketch the ledger layout */}
+              {task?.title}
             </Typography>
 
             {/* Actions */}
@@ -246,7 +300,7 @@ export default function TaskItem() {
                   textDecorationColor: theme.palette.text.primary,
                   textUnderlineOffset: 2,
                 }}
-                onClick={() => setEditMode(true)}
+                onClick={handleEdit}
               >
                 EDIT
               </Link>
@@ -269,7 +323,27 @@ export default function TaskItem() {
       )}
       {/* <Chip label="Medium" color="error" size="small" sx={{borderRadius: 0, position: 'absolute', top: 30, right: -30, transform: "rotate(90deg)", textTransform: 'uppercase', fontFamily: 'monospace'}}/> */}
       {!EditMode && (
-      <span style={{backgroundColor: theme.palette.status.medium, color: 'white', fontSize: '12px', padding: '6px 2px', borderRadius: 0, position: 'absolute', top: 20, right: -12, transform: "rotate(180deg)", textTransform: 'uppercase', fontFamily: 'monospace', writingMode: 'vertical-rl'}}>medium</span>
+        <span
+          style={{
+            backgroundColor:
+              theme.palette.status[
+                task?.priority?.toLowerCase() as "low" | "medium" | "high"
+              ] || theme.palette.primary.main,
+            color: "white",
+            fontSize: "12px",
+            padding: "6px 2px",
+            borderRadius: 0,
+            position: "absolute",
+            top: 20,
+            right: -12,
+            transform: "rotate(180deg)",
+            textTransform: "uppercase",
+            fontFamily: "monospace",
+            writingMode: "vertical-rl",
+          }}
+        >
+          {task?.priority}
+        </span>
       )}
     </Box>
   );
