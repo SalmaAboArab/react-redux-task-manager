@@ -32,7 +32,7 @@ export const tasksSlice = createSlice({
         priority: priority,
         completed: false,
       };
-      state.tasks.push(newTask);
+      state.tasks.unshift(newTask);
     },
     edit: (state, action) => {
       const { id, taskName, priority } = action.payload;
@@ -43,17 +43,18 @@ export const tasksSlice = createSlice({
       }
     },
     toggleComplete: (state, action) => {
-      const { id } = action.payload;
-      const task = state.tasks.find((task) => task.id === id);
-
+      const task = state.tasks.find((task) => task.id === action.payload);
       if (task) {
         task.completed = !task.completed;
       }
     },
+    deleteTask: (state, action) => {
+      state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+    },
   },
 });
 
-export const { create, edit, toggleComplete } = tasksSlice.actions;
+export const { create, edit, toggleComplete, deleteTask } = tasksSlice.actions;
 
 export const selectTaskCounts = (state: any) => {
   const items = state.tasks.tasks;

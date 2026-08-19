@@ -57,7 +57,7 @@ function App() {
             counts={counts}
           />
           {Tasks.map((task: TaskType) => (
-            <TaskItem task={task} />
+            <TaskItem task={task} key={task?.id} />
           ))}
         </Stack>
       </Box>

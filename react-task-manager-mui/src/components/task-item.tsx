@@ -13,7 +13,7 @@ import React, { useState } from "react";
 import type { TaskData, TaskType } from "./types";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { edit, toggleComplete } from "../redux/tasks-slice";
+import { edit, toggleComplete, deleteTask } from "../redux/tasks-slice";
 
 export default function TaskItem({ task }: { task: TaskType }) {
   const theme = useTheme();
@@ -213,7 +213,7 @@ export default function TaskItem({ task }: { task: TaskType }) {
             }
             tabIndex={0}
             onClick={() => {
-              dispatch(toggleComplete(task));
+              dispatch(toggleComplete(task?.id));
             }}
             sx={{
               flexShrink: 0,
@@ -291,6 +291,7 @@ export default function TaskItem({ task }: { task: TaskType }) {
               }}
             >
               <Link
+              component='button'
                 sx={{
                   cursor: "pointer",
                   mr: 2,
@@ -306,6 +307,10 @@ export default function TaskItem({ task }: { task: TaskType }) {
               </Link>
 
               <Link
+              component='button'
+              onClick={() => {
+              dispatch(deleteTask(task?.id));
+            }}
                 sx={{
                   cursor: "pointer",
                   color: theme.palette.status.high,
