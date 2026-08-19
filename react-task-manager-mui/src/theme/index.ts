@@ -5,10 +5,10 @@ const theme = createTheme({
     primary: {
       main: "#2a3444",
       light: "#8892a0",
-      dark: "#1b2430"
+      dark: "#1b2430",
     },
     secondary: {
-      main: "#EDF4FF",
+      main: "#fdfaf2",
     },
     status: {
       gold: "#c98a2b",
@@ -18,8 +18,8 @@ const theme = createTheme({
       rule: "#c6b995",
     },
     paperColor: {
-        paper: "#ece4d3",
-  paperShadow: "#d8cdb2",
+      paper: "#ece4d3",
+      paperShadow: "#d8cdb2",
     },
   },
   typography: {
