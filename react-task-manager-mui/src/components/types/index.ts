@@ -4,6 +4,5 @@ export type TaskType = {id: string, title: string, priority: PRIORITIES, complet
 export type TaskData = {
   taskName: string;
   priority: PRIORITIES;
-//   "low" | "medium" | "high";
 };
 export type Statustype = "All" | "Active" | "Completed"
