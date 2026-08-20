@@ -16,7 +16,7 @@ export default function TaskManagerHeader() {
           color: theme.palette.status.gold,
           letterSpacing: 4,
           textTransform: "uppercase",
-          fontSize: '12px',
+          fontSize: "12px",
         }}
       >
         Vol. I — Daily Ledger

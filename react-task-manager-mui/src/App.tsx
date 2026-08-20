@@ -2,19 +2,25 @@ import { Box, Container, Divider, Stack, useTheme } from "@mui/material";
 import "./App.css";
 import TaskManagerHeader from "./components/header";
 import TaskCreator from "./components/task-creator";
-import TasksFilter from "./components/tasks-filter";
+import TasksFilter from "./components/task-filter";
 import TaskItem from "./components/task-item";
 import { useSelector } from "react-redux";
-import type { TaskType } from "./components/types";
-import { selectTaskCounts } from "./redux/tasks-slice";
+import type { PRIORITIES, Statustype, TaskType } from "./components/types";
+import { selectTaskCounts, selectVisibleTasks } from "./redux/tasks-slice";
+import { useState } from "react";
+import EmptyState from "./components/empty-state";
 
 function App() {
   const theme = useTheme();
-  const Tasks = useSelector(
-    (state: { tasks: { tasks: TaskType[] } }) => state.tasks.tasks,
-  );
-
+  // const Tasks = useSelector(
+  //   (state: { tasks: { tasks: TaskType[] } }) => state.tasks.tasks,
+  // );
+  const [priorityFilter, setPriorityFilter] = useState<PRIORITIES>("All");
+  const [statusFilter, setStatusFilter] = useState<Statustype>("All");
   const counts = useSelector(selectTaskCounts);
+  const currentTasks: TaskType[] = useSelector((state) =>
+    selectVisibleTasks(state, priorityFilter, statusFilter),
+  );
 
   return (
     <Box
@@ -55,10 +61,18 @@ function App() {
           <TaskCreator />
           <TasksFilter
             counts={counts}
+            onPriorityChange={setPriorityFilter}
+            priorityFilter={priorityFilter}
+            onStatusChange={setStatusFilter}
+            statusFilter={statusFilter}
           />
-          {Tasks.map((task: TaskType) => (
-            <TaskItem task={task} key={task?.id} />
-          ))}
+          {currentTasks?.length > 0 ? (
+            currentTasks.map((task: TaskType) => (
+              <TaskItem task={task} key={task?.id} />
+            ))
+          ) : (
+            <EmptyState />
+          )}
         </Stack>
       </Box>
     </Box>

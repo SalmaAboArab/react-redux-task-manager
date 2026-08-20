@@ -7,7 +7,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Typography,
   useTheme,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
@@ -54,13 +53,10 @@ export default function TaskCreator() {
                 fontStyle: "italic",
                 fontSize: "1rem",
               },
-
               borderBottom: "2px solid black",
-
-              //   "&:hover": {
-              //     borderBottom: `2px solid ${theme.palette.status.medium}`,
-              //   },
-
+              // "&:hover": {
+              //   borderBottom: `2px solid ${theme.palette.status.medium}`,
+              // },
               "&:focus-within": {
                 borderBottom: `2px solid ${theme.palette.status.medium}`,
               },
@@ -84,7 +80,7 @@ export default function TaskCreator() {
                       "& .MuiPaper-root": {
                         bgcolor: theme.palette.paperColor.paper,
                       },
-
+                      
                       "& .MuiMenuItem-root": {
                         fontSize: 13,
                         fontFamily: "monospace",

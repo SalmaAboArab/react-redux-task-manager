@@ -1,4 +1,5 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
+import type { PRIORITIES, Statustype } from "../components/types";
 
 const PRIORITIES = ["high", "medium", "low"];
 
@@ -75,6 +76,24 @@ export const selectTaskCounts = (state: any) => {
       {} as Record<(typeof PRIORITIES)[number], number>,
     ),
   };
+};
+
+export const selectVisibleTasks = (
+  state: any,
+  priorityFilter: PRIORITIES,
+  statusFilter: Statustype,
+) => {
+  return state.tasks.tasks.filter((task: any) => {
+    const matchesPriority =
+      priorityFilter === "All" || task.priority === priorityFilter;
+
+    const matchesStatus =
+      statusFilter === "All" ||
+      (statusFilter === "Active" && !task.completed) ||
+      (statusFilter === "Completed" && task.completed);
+
+    return matchesPriority && matchesStatus;
+  });
 };
 
 export default tasksSlice.reducer;
