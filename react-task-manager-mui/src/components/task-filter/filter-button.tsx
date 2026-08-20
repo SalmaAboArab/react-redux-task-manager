@@ -17,7 +17,15 @@ export default function FilterButtons({
 }) {
   const theme = useTheme();
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: { xs: "flex-start", sm: "center" },
+        gap: 1,
+        maxWidth: "100%",
+        flexWrap: "wrap",
+      }}
+    >
       <Typography
         variant="caption"
         sx={{
@@ -30,7 +38,16 @@ export default function FilterButtons({
         {type}
       </Typography>
 
-      <Stack direction="row" spacing={1}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{
+          flexWrap: "wrap",
+          rowGap: 1,
+          minWidth: 0,
+          maxWidth: "100%",
+        }}
+      >
         {MapData.map((value) => {
           const isActive = FilterData === value;
 
